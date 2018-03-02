@@ -1,0 +1,182 @@
+options
+{
+ LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(YAL2JVM)
+// código Java que invoca o parser
+public class YAL2JVM {
+ public static void main(String args[]) throws ParseException {
+// criação do objecto utilizando o constructor com argumento para
+// ler do standard input (teclado)
+ YAL2JVM parser = new YAL2JVM(System.in);
+ parser.Module();
+ }
+}
+PARSER_END(YAL2JVM)
+// símbolos que não devem ser considerados na análise
+SKIP :
+{
+  " "
+  | "\t"
+  | "\n"
+  | "\r"
+  | <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+  | <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+// definição dos tokens (símbolos terminais)
+/* reserved words */
+<DEFAULT> TOKEN : {
+<RELA_OP: ">" | "<" | "<=" | ">=" | "==" | "!=">
+| <ADDSUB_OP: "+" | "-">
+| <ARITH_OP: "*" | "/" | "<<" | ">>" | ">>>">
+| <BITWISE_OP: "&" | "|" | "^">
+| <NOT_OP: "!">
+| <WHILE: "while">
+| <IF: "if">
+| <ELSE: "else">
+| <ASSIGN: "=">
+| <ASPA: "\"">
+| <LPAR: "(">
+| <RPAR: ")">
+| <VIRG: ",">
+| <PVIRG: ";">
+| <LCHAVETA: "{">
+| <RCHAVETA: "}">
+| <FUNCTION: "function">
+| <MODULE: "module">
+| <SIZE: "size">
+}
+
+<DEFAULT> TOKEN : {
+<INTEGER: (<DIGIT>)+>
+| <ID: <LETTER> (<LETTER> | <DIGIT>)*>
+| <#LETTER: ["$","A"-"Z","_","a"-"z"]>
+| <#DIGIT: ["0"-"9"]>
+| <STRING: "\"" (["a"-"z","A"-"Z","0"-"9",":"," ","="])+ "\"">
+}
+
+// definição da produção
+
+void Module() : {}
+{
+  <MODULE> <ID> <LCHAVETA>
+  (LOOKAHEAD(2) Declaration() )* ( Function() )*
+  <RCHAVETA>
+}
+
+void Declaration() : {}
+{
+  (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) ( <ASSIGN> ( ( "[" ArraySize() "]" ) | (
+  <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
+}
+
+void Function() : {}
+{
+  ( LOOKAHEAD(3)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> <LPAR> (
+  Varlist() )? <RPAR> ) | ( <FUNCTION> <ID> <LPAR> ( Varlist() )? <RPAR> ) )
+  <LCHAVETA> Stmtlst() <RCHAVETA>
+}
+
+void Varlist() : {}
+{
+  (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ))*
+}
+
+void ArrayElement() : {}
+{
+  <ID> "[" "]"
+}
+
+void ScalarElement() : {}
+{
+  <ID>
+}
+
+void Stmtlst() : {}
+{
+   ( Stmt() )*
+}
+
+void Stmt() : {}
+{
+  While()
+  | If()
+  | LOOKAHEAD(3) Assign()
+  | Call() <PVIRG>
+}
+
+void Assign() : {}
+{
+  Lhs() <ASSIGN> Rhs() <PVIRG>
+}
+
+void Lhs() : {}
+{
+  LOOKAHEAD(<ID>"[") ArrayAccess()
+  | ScalarAccess()
+}
+
+void Rhs() : {}
+{
+  ( Term() ( ( <ARITH_OP> | <BITWISE_OP> | <ADDSUB_OP> ) Term() )? )
+  | "[" ArraySize() "]"
+}
+
+void ArraySize() : {}
+{
+  ScalarAccess()
+  | <INTEGER>
+}
+
+void Term() : {}
+{
+  ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
+}
+
+void Exprtest() : {}
+{
+  <LPAR> Lhs() <RELA_OP> Rhs() <RPAR>
+}
+
+void While() : {}
+{
+  <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
+}
+
+void If() : {}
+{
+  <IF> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA> ( <ELSE> <LCHAVETA>
+  Stmtlst() <RCHAVETA> )?
+}
+
+void Call() : {}
+{
+ <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
+}
+
+void ArgumentList() : {}
+{
+ Argument() ( <VIRG> Argument() )*
+}
+
+void Argument() : {}
+{
+ ( <ID> | <STRING> | <INTEGER> )
+}
+
+void ArrayAccess() : {}
+{
+  <ID> "[" Index() "]"
+}
+
+void ScalarAccess() : {}
+{
+  <ID> ( "." <SIZE> )?
+}
+
+void Index() : {}
+{
+  <ID>
+  | <INTEGER>
+}
