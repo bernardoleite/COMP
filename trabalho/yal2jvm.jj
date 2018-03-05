@@ -1,16 +1,37 @@
 options
 {
  LOOKAHEAD=1;
+ static = false;
 }
 
 PARSER_BEGIN(YAL2JVM)
+import java.io.* ;
 // código Java que invoca o parser
 public class YAL2JVM {
  public static void main(String args[]) throws ParseException {
 // criação do objecto utilizando o constructor com argumento para
 // ler do standard input (teclado)
- YAL2JVM parser = new YAL2JVM(System.in);
- parser.Module();
+ Token t;
+ YAL2JVMTokenManager tm;
+ int numToken=0;
+
+  if (args.length<1) {
+        System.out.println("Ficheiro não especificado!");
+        System.exit(1);
+  }
+  try{
+      java.io.InputStream infile;
+      infile = new java.io.FileInputStream(args[0]);
+      tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
+      System.out.println("Ficheiro lido com sucesso!");
+      YAL2JVM parser = new YAL2JVM(infile);
+      parser.Module();
+      System.out.println("Leitura terminada.");
+  }
+  catch (java.io.FileNotFoundException e) {
+      System.out.println("Ficheiro "+args[0]+" não encontrado");
+      return; 
+    }
  }
 }
 PARSER_END(YAL2JVM)
