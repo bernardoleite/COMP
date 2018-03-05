@@ -11,9 +11,7 @@ public class YAL2JVM {
  public static void main(String args[]) throws ParseException {
 // criação do objecto utilizando o constructor com argumento para
 // ler do standard input (teclado)
- Token t;
  YAL2JVMTokenManager tm;
- int numToken=0;
 
   if (args.length<1) {
         System.out.println("Ficheiro não especificado!");
@@ -25,16 +23,41 @@ public class YAL2JVM {
       tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
       System.out.println("Ficheiro lido com sucesso!");
       YAL2JVM parser = new YAL2JVM(infile);
-      parser.Module();
+      parser.Sentence();
       System.out.println("Leitura terminada.");
   }
   catch (java.io.FileNotFoundException e) {
       System.out.println("Ficheiro "+args[0]+" não encontrado");
       return; 
     }
+
  }
+
+void error_skipto(int kind) {
+  ParseException e = generateParseException();  
+  System.out.println(e.toString());  
+  Token t;
+  do {
+    t = getNextToken();
+  } while (t.kind != kind);
+}
+
 }
 PARSER_END(YAL2JVM)
+
+
+void Sentence():
+{}
+{
+  try{
+    Module()
+  }catch (ParseException e){
+    System.out.println("--->Exception Catched!!! The message: <---");
+    error_skipto(PVIRG);
+  }
+}
+
+
 // símbolos que não devem ser considerados na análise
 SKIP :
 {
