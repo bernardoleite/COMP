@@ -52,8 +52,12 @@ void Sentence():
   try{
     Module()
   }catch (ParseException e){
-    System.out.println("--->Exception Catched!!! The message: <---");
-    error_skipto(PVIRG);
+  System.out.println("--->Exception Catched!!! The message: <---");
+  System.out.println(" " 
+  + e.currentToken.image 
+  + " << Line:" + e.currentToken.beginLine 
+  + ", column:" + e.currentToken.beginColumn);
+  //error_skipto(PVIRG); //Descomentar para o programar continuar até encontrar Ponto e Virgula
   }
 }
 
