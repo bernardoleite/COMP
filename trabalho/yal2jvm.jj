@@ -8,6 +8,9 @@ PARSER_BEGIN(YAL2JVM)
 import java.io.* ;
 // código Java que invoca o parser
 public class YAL2JVM {
+
+public int errors = 0; // use this variable in order to control the maximum of errors (10)
+
  public static void main(String args[]) throws ParseException {
 // criação do objecto utilizando o constructor com argumento para
 // ler do standard input (teclado)
@@ -42,6 +45,16 @@ void error_skipto(int kind) {
   } while (t.kind != kind);
 }
 
+void error_control(ParseException e) {
+
+  errors++;
+
+  if(errors > 10)
+    System.exit(1);
+
+  System.out.println(e.currentToken.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.beginColumn);
+}
+
 }
 PARSER_END(YAL2JVM)
 
@@ -53,10 +66,7 @@ void Sentence():
     Module()
   }catch (ParseException e){
   System.out.println("--->Exception Catched!!! The message: <---");
-  System.out.println(" " 
-  + e.currentToken.image 
-  + " << Line:" + e.currentToken.beginLine 
-  + ", column:" + e.currentToken.beginColumn);
+  error_control(e);
   //error_skipto(PVIRG); //Descomentar para o programar continuar até encontrar Ponto e Virgula
   }
 }
@@ -108,9 +118,16 @@ SKIP :
 
 void Module() : {}
 {
+  try{
   <MODULE> <ID> <LCHAVETA>
   (LOOKAHEAD(2) Declaration() )* ( Function() )*
   <RCHAVETA>
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Module");
+    error_control(e);
+  }
+
 }
 
 void Declaration() : {}
@@ -121,9 +138,16 @@ void Declaration() : {}
 
 void Function() : {}
 {
+  try{
   ( LOOKAHEAD(3)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> <LPAR> (
   Varlist() )? <RPAR> ) | ( <FUNCTION> <ID> <LPAR> ( Varlist() )? <RPAR> ) )
   <LCHAVETA> Stmtlst() <RCHAVETA>
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Function");
+    error_control(e);
+  }
+
 }
 
 void Varlist() : {}
@@ -133,7 +157,13 @@ void Varlist() : {}
 
 void ArrayElement() : {}
 {
+  try{
   <ID> "[" "]"
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
+    error_control(e);
+    }
 }
 
 void ScalarElement() : {}
@@ -143,7 +173,13 @@ void ScalarElement() : {}
 
 void Stmtlst() : {}
 {
-   ( Stmt() )*
+  try{
+    ( Stmt() )*
+    }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Stmlst");
+    error_control(e);
+    }
 }
 
 void Stmt() : {}
@@ -156,7 +192,13 @@ void Stmt() : {}
 
 void Assign() : {}
 {
+  try{
   Lhs() <ASSIGN> Rhs() <PVIRG>
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
+    error_control(e);
+    }
 }
 
 void Lhs() : {}
@@ -167,8 +209,14 @@ void Lhs() : {}
 
 void Rhs() : {}
 {
+  try{
   ( Term() ( ( <ARITH_OP> | <BITWISE_OP> | <ADDSUB_OP> ) Term() )? )
   | "[" ArraySize() "]"
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
+    error_control(e);
+  }
 }
 
 void ArraySize() : {}
@@ -179,7 +227,13 @@ void ArraySize() : {}
 
 void Term() : {}
 {
+  try{
   ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Term");
+    error_control(e);
+  }
 }
 
 void Exprtest() : {}
@@ -189,7 +243,13 @@ void Exprtest() : {}
 
 void While() : {}
 {
+  try{
   <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on While");
+    error_control(e);
+  }
 }
 
 void If() : {}
@@ -200,7 +260,13 @@ void If() : {}
 
 void Call() : {}
 {
- <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
+  try{
+  <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Call");
+    error_control(e);
+  }
 }
 
 void ArgumentList() : {}
@@ -210,7 +276,13 @@ void ArgumentList() : {}
 
 void Argument() : {}
 {
- ( <ID> | <STRING> | <INTEGER> )
+  try{
+  ( <ID> | <STRING> | <INTEGER> )
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
+    error_control(e);
+  }
 }
 
 void ArrayAccess() : {}
@@ -220,7 +292,13 @@ void ArrayAccess() : {}
 
 void ScalarAccess() : {}
 {
+  try{
   <ID> ( "." <SIZE> )?
+  }
+  catch(ParseException e){
+    System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
+    error_control(e);
+  }
 }
 
 void Index() : {}
