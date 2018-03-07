@@ -82,7 +82,7 @@ void error_control(ParseException e, String expr, int skipKind) {
       Token t;
       do {
         t = getNextToken();
-    //    System.out.println("Image " + t.image);
+        System.out.println("Image " + t.image);
 
       } while (t.kind != skipKind);
     }
@@ -174,8 +174,7 @@ void Function() : {}
   catch(ParseException e){
       error_control(e, "Function", LPAR);
       Varlist();
-      error_control(e, "0", RPAR);
-      error_control(e, "0", LCHAVETA);
+
       Stmtlst();
       error_control(e, "0", RCHAVETA);
   }
@@ -218,7 +217,7 @@ void Stmtlst() : {}
     ( Stmt() )*
     }
   catch(ParseException e){
-      error_control(e, "Stmtlst", RCHAVETA);
+        error_control(e, "Stmtlst", PVIRG);
     }
 }
 
@@ -326,7 +325,7 @@ void Call() : {}
   <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
   }
   catch(ParseException e){
-      error_control(e, "Call", PVIRG);
+      error_control(e, "Call", RPAR);
   }
 }
 

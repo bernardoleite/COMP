@@ -77,7 +77,7 @@ void error_control(ParseException e, String expr, int skipKind) {
       Token t;
       do {
         t = getNextToken();
-    //    System.out.println("Image " + t.image);
+        System.out.println("Image " + t.image);
 
       } while (t.kind != skipKind);
     }
@@ -238,8 +238,7 @@ error_control(e, "Declaration", PVIRG);
     } catch (ParseException e) {
 error_control(e, "Function", LPAR);
       Varlist();
-      error_control(e, "0", RPAR);
-      error_control(e, "0", LCHAVETA);
+
       Stmtlst();
       error_control(e, "0", RCHAVETA);
     }
@@ -329,7 +328,7 @@ error_control(e, "ScalarElement", PVIRG);
         Stmt();
       }
     } catch (ParseException e) {
-error_control(e, "Stmtlst", RCHAVETA);
+error_control(e, "Stmtlst", PVIRG);
     }
   }
 
@@ -590,7 +589,7 @@ error_control(e, "If", PVIRG);
       }
       jj_consume_token(RPAR);
     } catch (ParseException e) {
-error_control(e, "Call", PVIRG);
+error_control(e, "Call", RPAR);
     }
   }
 
@@ -881,12 +880,6 @@ error_control(e, "Index", PVIRG);
     return false;
   }
 
-  private boolean jj_3R_20()
- {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
   private boolean jj_3R_6()
  {
     Token xsp;
@@ -898,6 +891,12 @@ error_control(e, "Index", PVIRG);
     xsp = jj_scanpos;
     if (jj_3R_14()) jj_scanpos = xsp;
     if (jj_scan_token(PVIRG)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20()
+ {
+    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -939,6 +938,12 @@ error_control(e, "Index", PVIRG);
     return false;
   }
 
+  private boolean jj_3_1()
+ {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
   private boolean jj_3R_24()
  {
     if (jj_3R_28()) return true;
@@ -951,12 +956,6 @@ error_control(e, "Index", PVIRG);
     return false;
   }
 
-  private boolean jj_3_1()
- {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
   private boolean jj_3R_10()
  {
     if (jj_3R_16()) return true;
@@ -965,16 +964,16 @@ error_control(e, "Index", PVIRG);
     return false;
   }
 
+  private boolean jj_3R_8()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
   private boolean jj_3R_18()
  {
     if (jj_scan_token(33)) return true;
     if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8()
- {
-    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1029,16 +1028,16 @@ error_control(e, "Index", PVIRG);
     return false;
   }
 
+  private boolean jj_3R_13()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
   private boolean jj_3R_9()
  {
     if (jj_scan_token(ID)) return true;
     if (jj_scan_token(31)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13()
- {
-    if (jj_3R_15()) return true;
     return false;
   }
 
