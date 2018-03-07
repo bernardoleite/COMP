@@ -10,6 +10,8 @@ import java.io.* ;
 public class YAL2JVM {
 
 public int errors = 0; // use this variable in order to control the maximum of errors (10)
+public int line = 0;
+public int column = 0;
 
  public static void main(String args[]) throws ParseException {
 // criação do objecto utilizando o constructor com argumento para
@@ -124,8 +126,13 @@ void Module() : {}
   <RCHAVETA>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Module");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Module");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
+
   }
 
 }
@@ -137,8 +144,12 @@ void Declaration() : {}
   <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
 }
 
 }
@@ -151,8 +162,12 @@ void Function() : {}
   <LCHAVETA> Stmtlst() <RCHAVETA>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Function");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Function");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 
 }
@@ -163,8 +178,12 @@ void Varlist() : {}
   (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ))*
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -174,9 +193,13 @@ void ArrayElement() : {}
   <ID> "[" "]"
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
     }
+  }
 }
 
 void ScalarElement() : {}
@@ -185,8 +208,12 @@ void ScalarElement() : {}
   <ID>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -196,8 +223,12 @@ void Stmtlst() : {}
     ( Stmt() )*
     }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
 }
 
@@ -210,8 +241,12 @@ void Stmt() : {}
   | Call() <PVIRG>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
 }
 
@@ -221,8 +256,12 @@ void Assign() : {}
   Lhs() <ASSIGN> Rhs() <PVIRG>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
 }
 
@@ -233,8 +272,12 @@ void Lhs() : {}
   | ScalarAccess()
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
 }
 
@@ -245,8 +288,12 @@ void Rhs() : {}
   | "[" ArraySize() "]"
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -257,8 +304,12 @@ void ArraySize() : {}
   | <INTEGER>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -268,8 +319,12 @@ void Term() : {}
   ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Term");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Term");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -279,8 +334,12 @@ void Exprtest() : {}
   <LPAR> Lhs() <RELA_OP> Rhs() <RPAR>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -290,8 +349,12 @@ void While() : {}
   <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on While");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on While");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -302,8 +365,12 @@ void If() : {}
   Stmtlst() <RCHAVETA> )?
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on If");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on If");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -313,8 +380,12 @@ void Call() : {}
   <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Call");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Call");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -324,8 +395,12 @@ void ArgumentList() : {}
     Argument() ( <VIRG> Argument() )*
     }
     catch(ParseException e){
-      System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
-      error_control(e);
+      if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+        System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
+        error_control(e);
+        line = e.currentToken.beginLine;
+        column = e.currentToken.beginColumn;
+      }
     }
 }
 
@@ -335,8 +410,12 @@ void Argument() : {}
   ( <ID> | <STRING> | <INTEGER> )
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -346,8 +425,12 @@ void ArrayAccess() : {}
   <ID> "[" Index() "]"
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayAccess");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -357,8 +440,12 @@ void ScalarAccess() : {}
   <ID> ( "." <SIZE> )?
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }
 
@@ -369,7 +456,11 @@ void Index() : {}
   | <INTEGER>
   }
   catch(ParseException e){
-    System.out.println("yal2jvm.jj:error: Something went wrong on Index");
-    error_control(e);
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Index");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
   }
 }

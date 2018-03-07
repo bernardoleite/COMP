@@ -5,6 +5,8 @@ import java.io.* ;
 public class YAL2JVM implements YAL2JVMConstants {
 
 public int errors = 0; // use this variable in order to control the maximum of errors (10)
+public int line = 0;
+public int column = 0;
 
  public static void main(String args[]) throws ParseException {
 // criação do objecto utilizando o constructor com argumento para
@@ -92,8 +94,12 @@ void Module() throws ParseException {
       }
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Module");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Module");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -150,8 +156,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Module");
       }
       jj_consume_token(PVIRG);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -214,8 +224,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
       Stmtlst();
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Function");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Function");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -263,8 +277,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Function");
         }
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -274,8 +292,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
       jj_consume_token(31);
       jj_consume_token(32);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -283,8 +305,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
     try {
       jj_consume_token(ID);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -306,8 +332,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
         Stmt();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -341,8 +371,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
         }
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -353,8 +387,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
       Rhs();
       jj_consume_token(PVIRG);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -375,8 +413,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
         }
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -430,8 +472,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
         throw new ParseException();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -452,8 +498,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
         throw new ParseException();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -493,8 +543,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
         }
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Term");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Term");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -506,8 +560,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Term");
       Rhs();
       jj_consume_token(RPAR);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -519,8 +577,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
       Stmtlst();
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on While");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on While");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -544,8 +606,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on While");
         ;
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on If");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on If");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -576,8 +642,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on If");
       }
       jj_consume_token(RPAR);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Call");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Call");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -599,8 +669,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Call");
         Argument();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
-      error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+        System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
+        error_control(e);
+        line = e.currentToken.beginLine;
+        column = e.currentToken.beginColumn;
+      }
     }
   }
 
@@ -625,8 +699,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
         throw new ParseException();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -637,8 +715,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
       Index();
       jj_consume_token(32);
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayAccess");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -656,8 +738,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
         ;
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -678,8 +764,12 @@ System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
         throw new ParseException();
       }
     } catch (ParseException e) {
-System.out.println("yal2jvm.jj:error: Something went wrong on Index");
-    error_control(e);
+if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on Index");
+      error_control(e);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
     }
   }
 
@@ -763,15 +853,51 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     finally { jj_save(9, xla); }
   }
 
-  private boolean jj_3R_15()
+  private boolean jj_3_8()
  {
     if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
     return false;
   }
 
-  private boolean jj_3R_7()
+  private boolean jj_3R_13()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31()
+ {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
  {
     if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21()
+ {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20()
+ {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_16()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_20()) {
+    jj_scanpos = xsp;
+    if (jj_3R_21()) return true;
+    }
     return false;
   }
 
@@ -786,9 +912,16 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3R_13()
+  private boolean jj_3_4()
  {
-    if (jj_3R_15()) return true;
+    if (jj_scan_token(FUNCTION)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_8()) return true;
+    }
+    if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
@@ -799,10 +932,82 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3R_9()
+  private boolean jj_3R_10()
+ {
+    if (jj_3R_16()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2()
  {
     if (jj_scan_token(ID)) return true;
     if (jj_scan_token(31)) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26()
+ {
+    if (jj_scan_token(ID)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_30()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7()
+ {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_3R_14()) jj_scanpos = xsp;
+    if (jj_scan_token(PVIRG)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8()
+ {
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -825,12 +1030,29 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3R_26()
+  private boolean jj_3_1()
  {
-    if (jj_scan_token(ID)) return true;
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28()
+ {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_30()) jj_scanpos = xsp;
+    if (jj_scan_token(27)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(30)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(26)) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_19()
+ {
+    if (jj_3R_24()) return true;
     return false;
   }
 
@@ -840,17 +1062,36 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3_5()
+  private boolean jj_3R_15()
  {
-    if (jj_3R_9()) return true;
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 
-  private boolean jj_3R_25()
+  private boolean jj_3R_24()
+ {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14()
+ {
+    if (jj_scan_token(ASSIGN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3()
  {
     if (jj_scan_token(ID)) return true;
     if (jj_scan_token(31)) return true;
-    if (jj_3R_29()) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18()
+ {
+    if (jj_scan_token(33)) return true;
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 
@@ -860,22 +1101,10 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3_4()
+  private boolean jj_3R_9()
  {
-    if (jj_scan_token(FUNCTION)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
-    }
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19()
- {
-    if (jj_3R_24()) return true;
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
     return false;
   }
 
@@ -896,123 +1125,10 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3_2()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_28()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(27)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(30)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(26)) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_21()
- {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
   private boolean jj_3_10()
  {
     if (jj_scan_token(ID)) return true;
     if (jj_scan_token(31)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20()
- {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_20()) {
-    jj_scanpos = xsp;
-    if (jj_3R_21()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_6()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    }
-    xsp = jj_scanpos;
-    if (jj_3R_14()) jj_scanpos = xsp;
-    if (jj_scan_token(PVIRG)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24()
- {
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_18()
- {
-    if (jj_scan_token(33)) return true;
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31()
- {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10()
- {
-    if (jj_3R_16()) return true;
-    if (jj_scan_token(ASSIGN)) return true;
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -1029,35 +1145,9 @@ System.out.println("yal2jvm.jj:error: Something went wrong on Index");
     return false;
   }
 
-  private boolean jj_3R_8()
+  private boolean jj_3R_7()
  {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7()
- {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14()
- {
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
+    if (jj_3R_9()) return true;
     return false;
   }
 
