@@ -47,11 +47,13 @@ void error_control(ParseException e, String expr, int skipKind) {
 
   if(errors == 0) {
     System.out.println("--->Exception Catched!!! The message: <---");
+    System.out.println();
   }
   if(expr != "0") {
 
     errors++;
     if(!(line == e.currentToken.next.beginLine && column == e.currentToken.next.beginColumn)) {
+      System.out.println();
       System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
       System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.next.beginLine + ", column:" + e.currentToken.next.beginColumn);
       System.out.println("Expecting: ");
@@ -60,6 +62,7 @@ void error_control(ParseException e, String expr, int skipKind) {
           System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
         }
       }
+      System.out.println();
 
       line = e.currentToken.next.beginLine;
       column = e.currentToken.next.beginColumn;
@@ -768,31 +771,6 @@ error_control(e, "Index", PVIRG);
     finally { jj_save(9, xla); }
   }
 
-  private boolean jj_3_5()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(8)) jj_scanpos = xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(26)) {
-    jj_scanpos = xsp;
-    if (jj_3_9()) {
-    jj_scanpos = xsp;
-    if (jj_3R_31()) {
-    jj_scanpos = xsp;
-    if (jj_3R_32()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
   private boolean jj_3R_29()
  {
     Token xsp;
@@ -1061,6 +1039,31 @@ error_control(e, "Index", PVIRG);
   private boolean jj_3R_13()
  {
     if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(8)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(26)) {
+    jj_scanpos = xsp;
+    if (jj_3_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) {
+    jj_scanpos = xsp;
+    if (jj_3R_32()) return true;
+    }
+    }
+    }
     return false;
   }
 

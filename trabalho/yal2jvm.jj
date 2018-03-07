@@ -52,11 +52,13 @@ void error_control(ParseException e, String expr, int skipKind) {
 
   if(errors == 0) {
     System.out.println("--->Exception Catched!!! The message: <---");
+    System.out.println();
   }
   if(expr != "0") {
 
     errors++;
     if(!(line == e.currentToken.next.beginLine && column == e.currentToken.next.beginColumn)) {
+      System.out.println();
       System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
       System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.next.beginLine + ", column:" + e.currentToken.next.beginColumn);
       System.out.println("Expecting: ");
@@ -65,6 +67,7 @@ void error_control(ParseException e, String expr, int skipKind) {
           System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
         }
       }
+      System.out.println();
 
       line = e.currentToken.next.beginLine;
       column = e.currentToken.next.beginColumn;
