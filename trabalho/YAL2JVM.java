@@ -42,22 +42,30 @@ void error_skipto(int kind) {
   } while (t.kind != kind);
 }
 
-void error_control(ParseException e) {
+void error_control(ParseException e, String expr) {
 
-  errors++;
+  if(expr != "1") {
 
+    errors++;
+    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+      System.out.println(e.currentToken.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.beginColumn);
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
+  } else {
+    System.out.println("--->Exception Catched!!! The message: <---");
+  }
   if(errors > 10)
     System.exit(1);
 
-  System.out.println(e.currentToken.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.beginColumn);
 }
 
   final public void Sentence() throws ParseException {
     try {
       Module();
     } catch (ParseException e) {
-System.out.println("--->Exception Catched!!! The message: <---");
-  error_control(e);
+error_control(e, "1");
   //error_skipto(PVIRG); //Descomentar para o programar continuar até encontrar Ponto e Virgula
 
     }
@@ -94,12 +102,7 @@ void Module() throws ParseException {
       }
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Module");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Module");
     }
   }
 
@@ -156,12 +159,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       }
       jj_consume_token(PVIRG);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Declaration");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Declaration");
     }
   }
 
@@ -224,12 +222,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       Stmtlst();
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Function");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Function");
     }
   }
 
@@ -277,12 +270,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         }
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Varlist");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Varlist");
     }
   }
 
@@ -292,12 +280,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       jj_consume_token(31);
       jj_consume_token(32);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayElement");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "ArrayElement");
     }
   }
 
@@ -305,12 +288,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     try {
       jj_consume_token(ID);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarElement");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "ScalarElement");
     }
   }
 
@@ -332,12 +310,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         Stmt();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Stmtlst");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Stmtlst");
     }
   }
 
@@ -371,12 +344,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         }
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Stmt");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Stmt");
     }
   }
 
@@ -387,12 +355,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       Rhs();
       jj_consume_token(PVIRG);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Assign");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Assign");
     }
   }
 
@@ -413,12 +376,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         }
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Lhs");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Lhs");
     }
   }
 
@@ -472,12 +430,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         throw new ParseException();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Rhs");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Rhs");
     }
   }
 
@@ -498,12 +451,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         throw new ParseException();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on ArraySize");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "ArraySize");
     }
   }
 
@@ -543,12 +491,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         }
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Term");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Term");
     }
   }
 
@@ -560,12 +503,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       Rhs();
       jj_consume_token(RPAR);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Exprtest");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Exprtest");
     }
   }
 
@@ -577,12 +515,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       Stmtlst();
       jj_consume_token(RCHAVETA);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on While");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "While");
     }
   }
 
@@ -606,12 +539,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         ;
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on If");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "If");
     }
   }
 
@@ -642,12 +570,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       }
       jj_consume_token(RPAR);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Call");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Call");
     }
   }
 
@@ -669,12 +592,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         Argument();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-        System.out.println("yal2jvm.jj:error: Something went wrong on ArgumentList");
-        error_control(e);
-        line = e.currentToken.beginLine;
-        column = e.currentToken.beginColumn;
-      }
+error_control(e, "ArgumentList");
     }
   }
 
@@ -699,12 +617,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         throw new ParseException();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Argument");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Argument");
     }
   }
 
@@ -715,12 +628,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
       Index();
       jj_consume_token(32);
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on ArrayAccess");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "ArrayAccess");
     }
   }
 
@@ -738,12 +646,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         ;
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on ScalarAccess");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "ScalarAccess");
     }
   }
 
@@ -764,12 +667,7 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
         throw new ParseException();
       }
     } catch (ParseException e) {
-if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on Index");
-      error_control(e);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
+error_control(e, "Index");
     }
   }
 
@@ -853,10 +751,9 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     finally { jj_save(9, xla); }
   }
 
-  private boolean jj_3_8()
+  private boolean jj_3R_7()
  {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
+    if (jj_3R_9()) return true;
     return false;
   }
 
@@ -866,15 +763,161 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_31()
+  private boolean jj_3R_9()
  {
-    if (jj_3R_25()) return true;
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
     return false;
   }
 
   private boolean jj_3_5()
  {
     if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(8)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(26)) {
+    jj_scanpos = xsp;
+    if (jj_3_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) {
+    jj_scanpos = xsp;
+    if (jj_3R_32()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_29()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(27)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(26)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_30()
+ {
+    if (jj_scan_token(33)) return true;
+    if (jj_scan_token(SIZE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32()
+ {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4()
+ {
+    if (jj_scan_token(FUNCTION)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_8()) return true;
+    }
+    if (jj_scan_token(ASSIGN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26()
+ {
+    if (jj_scan_token(ID)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_30()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_2()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23()
+ {
+    if (jj_scan_token(31)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_22()
+ {
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  private boolean jj_3_8()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_25()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19()
+ {
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_3R_14()) jj_scanpos = xsp;
+    if (jj_scan_token(PVIRG)) return true;
     return false;
   }
 
@@ -901,138 +944,10 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_29()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(27)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(26)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_4()
- {
-    if (jj_scan_token(FUNCTION)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
-    }
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30()
- {
-    if (jj_scan_token(33)) return true;
-    if (jj_scan_token(SIZE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10()
- {
-    if (jj_3R_16()) return true;
-    if (jj_scan_token(ASSIGN)) return true;
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_2()
+  private boolean jj_3_10()
  {
     if (jj_scan_token(ID)) return true;
     if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_26()
- {
-    if (jj_scan_token(ID)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_30()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  private boolean jj_3_7()
- {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    }
-    xsp = jj_scanpos;
-    if (jj_3R_14()) jj_scanpos = xsp;
-    if (jj_scan_token(PVIRG)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8()
- {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(8)) jj_scanpos = xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(26)) {
-    jj_scanpos = xsp;
-    if (jj_3_9()) {
-    jj_scanpos = xsp;
-    if (jj_3R_31()) {
-    jj_scanpos = xsp;
-    if (jj_3R_32()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -1050,21 +965,15 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_19()
+  private boolean jj_3_1()
  {
-    if (jj_3R_24()) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
-  private boolean jj_3R_32()
+  private boolean jj_3R_8()
  {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15()
- {
-    if (jj_scan_token(ID)) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1074,17 +983,17 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_14()
+  private boolean jj_3R_31()
  {
-    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_3R_25()) return true;
     return false;
   }
 
-  private boolean jj_3_3()
+  private boolean jj_3R_10()
  {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    if (jj_scan_token(32)) return true;
+    if (jj_3R_16()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_3R_17()) return true;
     return false;
   }
 
@@ -1095,40 +1004,9 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_23()
+  private boolean jj_3_7()
  {
-    if (jj_scan_token(31)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_22()
- {
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_22()) {
-    jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_10()
- {
-    if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(31)) return true;
+    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -1145,9 +1023,29 @@ if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) 
     return false;
   }
 
-  private boolean jj_3R_7()
+  private boolean jj_3R_14()
  {
-    if (jj_3R_9()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3()
+ {
+    if (jj_scan_token(ID)) return true;
+    if (jj_scan_token(31)) return true;
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_15()
+ {
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 
