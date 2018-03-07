@@ -28,7 +28,7 @@ public int column = 0;
       tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
       System.out.println("Ficheiro lido com sucesso!");
       YAL2JVM parser = new YAL2JVM(infile);
-      parser.Sentence();
+      parser.Module();
       System.out.println("Leitura terminada.");
   }
   catch (java.io.FileNotFoundException e) {
@@ -47,39 +47,48 @@ void error_skipto(int kind) {
   } while (t.kind != kind);
 }
 
-void error_control(ParseException e, String expr) {
+void error_control(ParseException e, String expr, int skipKind) {
 
-  if(expr != "1") {
 
-    errors++;
-    if(!(line == e.currentToken.beginLine && column == e.currentToken.beginColumn)) {
-      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
-      System.out.println(e.currentToken.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.beginColumn);
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
-    }
-  } else {
+  if(errors == 0) {
     System.out.println("--->Exception Catched!!! The message: <---");
   }
-  if(errors > 10)
-    System.exit(1);
+  if(expr != "0") {
+
+    errors++;
+    if(!(line == e.currentToken.next.beginLine && column == e.currentToken.next.beginColumn)) {
+      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+      System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.next.beginLine + ", column:" + e.currentToken.next.beginColumn);
+      System.out.println("Expecting: ");
+      for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+        for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+          System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+        }
+      }
+
+      line = e.currentToken.next.beginLine;
+      column = e.currentToken.next.beginColumn;
+    }
+
+    if(errors > 10) {
+      System.out.println("You have at least 10 errors!!!");
+      System.exit(1);
+    }
+
+    if(skipKind != PVIRG) {
+      Token t;
+      do {
+        t = getNextToken();
+    //    System.out.println("Image " + t.image);
+
+      } while (t.kind != skipKind);
+    }
+  }
 
 }
 
 }
 PARSER_END(YAL2JVM)
-
-
-void Sentence():
-{}
-{
-  try{
-    Module()
-  }catch (ParseException e){
-  error_control(e, "1");
-  //error_skipto(PVIRG); //Descomentar para o programar continuar até encontrar Ponto e Virgula
-  }
-}
 
 
 // símbolos que não devem ser considerados na análise
@@ -134,7 +143,7 @@ void Module() : {}
   <RCHAVETA>
   }
   catch(ParseException e){
-      error_control(e, "Module");
+      error_control(e, "Module", PVIRG);
   }
 
 }
@@ -146,7 +155,7 @@ void Declaration() : {}
   <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
   }
   catch(ParseException e){
-      error_control(e, "Declaration");
+      error_control(e, "Declaration", PVIRG);
 
 }
 
@@ -160,7 +169,12 @@ void Function() : {}
   <LCHAVETA> Stmtlst() <RCHAVETA>
   }
   catch(ParseException e){
-      error_control(e, "Function");
+      error_control(e, "Function", LPAR);
+      Varlist();
+      error_control(e, "0", RPAR);
+      error_control(e, "0", LCHAVETA);
+      Stmtlst();
+      error_control(e, "0", RCHAVETA);
   }
 
 }
@@ -168,10 +182,10 @@ void Function() : {}
 void Varlist() : {}
 {
   try{
-  (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ))*
+  (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(2) ArrayElement() | ScalarElement() ))*
   }
   catch(ParseException e){
-      error_control(e, "Varlist");
+      error_control(e, "Varlist", LCHAVETA);
   }
 }
 
@@ -181,7 +195,7 @@ void ArrayElement() : {}
   <ID> "[" "]"
   }
   catch(ParseException e){
-      error_control(e, "ArrayElement");
+      error_control(e, "ArrayElement", PVIRG);
   }
 }
 
@@ -191,7 +205,7 @@ void ScalarElement() : {}
   <ID>
   }
   catch(ParseException e){
-      error_control(e, "ScalarElement");
+      error_control(e, "ScalarElement", PVIRG);
   }
 }
 
@@ -201,7 +215,7 @@ void Stmtlst() : {}
     ( Stmt() )*
     }
   catch(ParseException e){
-      error_control(e, "Stmtlst");
+      error_control(e, "Stmtlst", RCHAVETA);
     }
 }
 
@@ -214,7 +228,8 @@ void Stmt() : {}
   | Call() <PVIRG>
   }
   catch(ParseException e){
-      error_control(e, "Stmt");
+      error_control(e, "Stmt", LCHAVETA);
+      Stmtlst(); error_control(e, "0", RCHAVETA);
     }
 }
 
@@ -224,7 +239,7 @@ void Assign() : {}
   Lhs() <ASSIGN> Rhs() <PVIRG>
   }
   catch(ParseException e){
-      error_control(e, "Assign");
+      error_control(e, "Assign", PVIRG);
     }
 }
 
@@ -235,7 +250,7 @@ void Lhs() : {}
   | ScalarAccess()
   }
   catch(ParseException e){
-      error_control(e, "Lhs");
+      error_control(e, "Lhs", PVIRG);
     }
 }
 
@@ -246,7 +261,7 @@ void Rhs() : {}
   | "[" ArraySize() "]"
   }
   catch(ParseException e){
-      error_control(e, "Rhs");
+      error_control(e, "Rhs", PVIRG);
     }
 }
 
@@ -257,7 +272,7 @@ void ArraySize() : {}
   | <INTEGER>
   }
   catch(ParseException e){
-      error_control(e, "ArraySize");
+      error_control(e, "ArraySize", PVIRG);
   }
 }
 
@@ -267,7 +282,7 @@ void Term() : {}
   ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
   }
   catch(ParseException e){
-      error_control(e, "Term");
+      error_control(e, "Term", PVIRG);
   }
 }
 
@@ -277,7 +292,7 @@ void Exprtest() : {}
   <LPAR> Lhs() <RELA_OP> Rhs() <RPAR>
   }
   catch(ParseException e){
-      error_control(e, "Exprtest");
+      error_control(e, "Exprtest", RPAR);
   }
 }
 
@@ -287,7 +302,7 @@ void While() : {}
   <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
   }
   catch(ParseException e){
-      error_control(e, "While");
+      error_control(e, "While", RCHAVETA);
   }
 }
 
@@ -298,7 +313,7 @@ void If() : {}
   Stmtlst() <RCHAVETA> )?
   }
   catch(ParseException e){
-      error_control(e, "If");
+      error_control(e, "If", PVIRG);
   }
 }
 
@@ -308,7 +323,7 @@ void Call() : {}
   <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
   }
   catch(ParseException e){
-      error_control(e, "Call");
+      error_control(e, "Call", PVIRG);
   }
 }
 
@@ -318,7 +333,7 @@ void ArgumentList() : {}
     Argument() ( <VIRG> Argument() )*
     }
     catch(ParseException e){
-        error_control(e, "ArgumentList");
+        error_control(e, "ArgumentList", PVIRG);
     }
 }
 
@@ -328,7 +343,7 @@ void Argument() : {}
   ( <ID> | <STRING> | <INTEGER> )
   }
   catch(ParseException e){
-      error_control(e, "Argument");
+      error_control(e, "Argument", PVIRG);
   }
 }
 
@@ -338,7 +353,7 @@ void ArrayAccess() : {}
   <ID> "[" Index() "]"
   }
   catch(ParseException e){
-      error_control(e, "ArrayAccess");
+      error_control(e, "ArrayAccess", PVIRG);
   }
 }
 
@@ -348,7 +363,7 @@ void ScalarAccess() : {}
   <ID> ( "." <SIZE> )?
   }
   catch(ParseException e){
-      error_control(e, "ScalarAccess");
+      error_control(e, "ScalarAccess", PVIRG);
   }
 }
 
@@ -359,6 +374,6 @@ void Index() : {}
   | <INTEGER>
   }
   catch(ParseException e){
-      error_control(e, "Index");
+      error_control(e, "Index", PVIRG);
   }
 }
