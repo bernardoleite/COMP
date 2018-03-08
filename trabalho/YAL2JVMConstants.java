@@ -47,17 +47,15 @@ public interface YAL2JVMConstants {
   /** RegularExpression Id. */
   int SIZE = 25;
   /** RegularExpression Id. */
-  int NT = 26;
+  int INTEGER = 26;
   /** RegularExpression Id. */
-  int INTEGER = 27;
+  int ID = 27;
   /** RegularExpression Id. */
-  int ID = 28;
+  int LETTER = 28;
   /** RegularExpression Id. */
-  int LETTER = 29;
+  int DIGIT = 29;
   /** RegularExpression Id. */
-  int DIGIT = 30;
-  /** RegularExpression Id. */
-  int STRING = 31;
+  int STRING = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -90,7 +88,6 @@ public interface YAL2JVMConstants {
     "\"function\"",
     "\"module\"",
     "\"size\"",
-    "\"\"",
     "<INTEGER>",
     "<ID>",
     "<LETTER>",

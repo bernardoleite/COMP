@@ -158,7 +158,6 @@ SKIP :
 | <FUNCTION: "function">
 | <MODULE: "module">
 | <SIZE: "size">
-| <NT : "">
 }
 
 <DEFAULT> TOKEN : {
@@ -180,7 +179,12 @@ void Module() : {/*@bgen(jjtree) Module */
   try {
 /*@egen*/
 
-  <MODULE> <ID> <LCHAVETA>  (LOOKAHEAD(2) Declaration() )* ( Function() )*  <RCHAVETA>/*@bgen(jjtree)*/
+  <MODULE> <ID> <LCHAVETA>  (LOOKAHEAD(2) Declaration() )*
+  try {
+    ( Function() )*  <RCHAVETA>
+  } catch(ParseException e) {
+    error_control(e, "Module", RCHAVETA);
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -201,7 +205,6 @@ void Module() : {/*@bgen(jjtree) Module */
     }
   }
 /*@egen*/
-
 }
 
 void Declaration() : {/*@bgen(jjtree) Declaration */
@@ -212,9 +215,12 @@ void Declaration() : {/*@bgen(jjtree) Declaration */
 {/*@bgen(jjtree) Declaration */
   try {
 /*@egen*/
-
+  try {
   (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) ( <ASSIGN> ( ( "[" ArraySize() "]" ) | (
-  <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>/*@bgen(jjtree)*/
+  <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
+  } catch(ParseException e) {
+    error_control(e, "Declaration", PVIRG);
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -235,7 +241,6 @@ void Declaration() : {/*@bgen(jjtree) Declaration */
     }
   }
 /*@egen*/
-
 }
 
 void Function() : {/*@bgen(jjtree) Function */
@@ -253,7 +258,12 @@ void Function() : {/*@bgen(jjtree) Function */
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
-  ( Varlist() )? <RPAR> <LCHAVETA> Stmtlst() <RCHAVETA>/*@bgen(jjtree)*/
+  try {
+  ( Varlist() )? <RPAR>
+  } catch(ParseException e) {
+    error_control(e, "Function", RPAR);
+  }
+  <LCHAVETA> Stmtlst() <RCHAVETA>/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -287,6 +297,8 @@ void Varlist() : {/*@bgen(jjtree) Varlist */
   try {
   (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(2) ArrayElement() | ScalarElement() ))*
   } catch(ParseException e) {
+    System.out.println("HEIFEHEA");
+
     skipt_do_not_consume_last(RPAR);
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -317,19 +329,15 @@ void ArrayElement() : {/*@bgen(jjtree) ArrayElement */
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) ArrayElement */
-  try {
+    try {
 /*@egen*/
 
-  try{
-    <ID> "[" "]"
-  } catch(ParseException e) {
-  //  error_control(e, "Wrong Name", NT);
-  }/*@bgen(jjtree)*/
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
+    <ID> "[" "]"/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
-  }
 /*@egen*/
 
 }
@@ -342,10 +350,10 @@ void ScalarElement() : {/*@bgen(jjtree) ScalarElement */
 {/*@bgen(jjtree) ScalarElement */
   try {
 /*@egen*/
-  try{
-  <ID>
+  try {
+    <ID>
   } catch(ParseException e) {
-    //error_control(e, "Wrong Name", NT);
+    System.out.println("HEIFEHEA");
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
@@ -638,10 +646,11 @@ void While() : {/*@bgen(jjtree) While */
   try {
 /*@egen*/
   try {
-  <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
+    <WHILE> Exprtest() <LCHAVETA>
   } catch(ParseException e) {
-    error_control(e, "While", RCHAVETA);
-  }/*@bgen(jjtree)*/
+    error_control(e, "While", LCHAVETA);
+  }
+  Stmtlst() <RCHAVETA>/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
