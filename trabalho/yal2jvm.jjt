@@ -1,0 +1,328 @@
+options
+{
+ LOOKAHEAD=1;
+ static = false;
+}
+
+PARSER_BEGIN(YAL2JVM)
+import java.io.* ;
+// código Java que invoca o parser
+public class YAL2JVM {
+
+public int errors = 0; // use this variable in order to control the maximum of errors (10)
+public int line = 0;
+public int column = 0;
+
+ public static void main(String args[]) throws ParseException {
+// criação do objecto utilizando o constructor com argumento para
+// ler do standard input (teclado)
+ YAL2JVMTokenManager tm;
+
+  if (args.length<1) {
+        System.out.println("Ficheiro não especificado!");
+        System.exit(1);
+  }
+  try{
+      java.io.InputStream infile;
+      infile = new java.io.FileInputStream(args[0]);
+      tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
+      System.out.println("Ficheiro lido com sucesso!");
+      YAL2JVM parser = new YAL2JVM(infile);
+      parser.Module();
+      System.out.println("Leitura terminada.");
+  }
+  catch (java.io.FileNotFoundException e) {
+      System.out.println("Ficheiro "+args[0]+" não encontrado");
+      return;
+    }
+
+ }
+
+}
+PARSER_END(YAL2JVM)
+
+
+JAVACODE
+void skipt_do_not_consume_last(int kind) {
+  ParseException e = generateParseException();
+  System.out.println(e.toString());
+  int token_kind;
+  Token t;
+  boolean canI = false;
+  do {
+
+    if(canI) {
+      t = getNextToken();
+    }
+    token_kind = jj_ntk_f();
+    canI = true;
+  } while (token_kind != kind);
+}
+JAVACODE
+void error_control(ParseException e, String expr, int skipKind) {
+
+
+  if(errors == 0) {
+    System.out.println("--->Exception Catched!!! The message: <---");
+    System.out.println();
+  }
+  if(expr != "0") {
+    if(!(e.currentToken.beginLine == line && e.currentToken.beginColumn == column)) {
+      errors++;
+      System.out.println();
+      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+      System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+      System.out.println("Expecting: ");
+      for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+        for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+          System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+        }
+      }
+      System.out.println();
+
+      line = e.currentToken.beginLine;
+      column = e.currentToken.beginColumn;
+    }
+
+    if(errors > 10) {
+      System.out.println("You have at least 10 errors!!!");
+      System.exit(1);
+    }
+
+  }
+    Token t;
+    do {
+      t = getNextToken();
+      System.out.println("Image " + t.image);
+
+    } while (t.kind != skipKind);
+
+
+}
+
+// símbolos que não devem ser considerados na análise
+SKIP :
+{
+  " "
+  | "\t"
+  | "\n"
+  | "\r"
+  | <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+  | <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+// definição dos tokens (símbolos terminais)
+/* reserved words */
+<DEFAULT> TOKEN : {
+<RELA_OP: ">" | "<" | "<=" | ">=" | "==" | "!=">
+| <ADDSUB_OP: "+" | "-">
+| <ARITH_OP: "*" | "/" | "<<" | ">>" | ">>>">
+| <BITWISE_OP: "&" | "|" | "^">
+| <NOT_OP: "!">
+| <WHILE: "while">
+| <IF: "if">
+| <ELSE: "else">
+| <ASSIGN: "=">
+| <ASPA: "\"">
+| <LPAR: "(">
+| <RPAR: ")">
+| <VIRG: ",">
+| <PVIRG: ";">
+| <LCHAVETA: "{">
+| <RCHAVETA: "}">
+| <FUNCTION: "function">
+| <MODULE: "module">
+| <SIZE: "size">
+| <NT : "">
+}
+
+<DEFAULT> TOKEN : {
+<INTEGER: (<DIGIT>)+>
+| <ID: <LETTER> (<LETTER> | <DIGIT>)*>
+| <#LETTER: ["$","A"-"Z","_","a"-"z"]>
+| <#DIGIT: ["0"-"9"]>
+| <STRING: "\"" (["a"-"z","A"-"Z","0"-"9",":"," ","="])+ "\"">
+}
+
+// definição da produção
+
+void Module() : {}
+{
+
+  <MODULE> <ID> <LCHAVETA>  (LOOKAHEAD(2) Declaration() )* ( Function() )*  <RCHAVETA>
+
+}
+
+void Declaration() : {}
+{
+
+  (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) ( <ASSIGN> ( ( "[" ArraySize() "]" ) | (
+  <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
+
+}
+
+void Function() : {}
+{
+    try {
+    ( LOOKAHEAD(3)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
+    <FUNCTION> <ID> ) ) <LPAR>
+
+  } catch(ParseException e) {
+    error_control(e, "Function", LPAR);
+  }
+  ( Varlist() )? <RPAR> <LCHAVETA> Stmtlst() <RCHAVETA>
+}
+
+void Varlist() : {}
+{
+  try {
+  (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(2) ArrayElement() | ScalarElement() ))*
+  } catch(ParseException e) {
+    skipt_do_not_consume_last(RPAR);
+  }
+}
+
+void ArrayElement() : {}
+{
+
+  try{
+    <ID> "[" "]"
+  } catch(ParseException e) {
+  //  error_control(e, "Wrong Name", NT);
+  }
+
+}
+
+void ScalarElement() : {}
+{
+  try{
+  <ID>
+  } catch(ParseException e) {
+    //error_control(e, "Wrong Name", NT);
+  }
+}
+
+void Stmtlst() : {}
+{
+
+    ( Stmt() )*
+
+}
+
+void Stmt() : {}
+{
+  try {
+  While()
+  | If()
+  | LOOKAHEAD(3) Assign()
+  | Call() <PVIRG>
+  } catch(ParseException e) {
+    error_control(e, "Stmt", PVIRG);
+  }
+}
+
+void Assign() : {}
+{
+
+  Lhs() <ASSIGN> Rhs() <PVIRG>
+
+}
+
+void Lhs() : {}
+{
+
+  LOOKAHEAD(<ID>"[") ArrayAccess()
+  | ScalarAccess()
+
+}
+
+void Rhs() : {}
+{
+
+  ( Term() ( ( <ARITH_OP> | <BITWISE_OP> | <ADDSUB_OP> ) Term() )? )
+  | "[" ArraySize() "]"
+
+}
+
+void ArraySize() : {}
+{
+
+  ScalarAccess()
+  | <INTEGER>
+
+}
+
+void Term() : {}
+{
+
+  ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
+
+}
+
+void Exprtest() : {}
+{
+  try {
+  <LPAR> Lhs() <RELA_OP> Rhs() <RPAR>
+  } catch(ParseException e) {
+    error_control(e, "Exprtest", RPAR);
+  }
+}
+
+void While() : {}
+{
+  try {
+  <WHILE> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA>
+  } catch(ParseException e) {
+    error_control(e, "While", RCHAVETA);
+  }
+}
+
+void If() : {}
+{
+
+  <IF> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA> ( <ELSE> <LCHAVETA>
+  Stmtlst() <RCHAVETA> )?
+
+}
+
+void Call() : {}
+{
+
+  <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
+
+}
+
+void ArgumentList() : {}
+{
+
+    Argument() ( <VIRG> Argument() )*
+
+}
+
+void Argument() : {}
+{
+
+  ( <ID> | <STRING> | <INTEGER> )
+
+}
+
+void ArrayAccess() : {}
+{
+
+  <ID> "[" Index() "]"
+
+}
+
+void ScalarAccess() : {}
+{
+
+  <ID> ( "." <SIZE> )?
+
+}
+
+void Index() : {}
+{
+
+  <ID>
+  | <INTEGER>
+
+}
