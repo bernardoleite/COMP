@@ -1,6 +1,7 @@
 options
 {
  LOOKAHEAD=1;
+ MULTI = true;
  static = false;
 }
 
@@ -28,7 +29,8 @@ public int column = 0;
       tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
       System.out.println("Ficheiro lido com sucesso!");
       YAL2JVM parser = new YAL2JVM(infile);
-      parser.Module();
+      ASTModule module = parser.Module();
+      module.dump("");
       System.out.println("Leitura terminada.");
   }
   catch (java.io.FileNotFoundException e) {
@@ -43,9 +45,28 @@ PARSER_END(YAL2JVM)
 
 
 JAVACODE
-void skipt_do_not_consume_last(int kind) {
-  ParseException e = generateParseException();
-  System.out.println(e.toString());
+void skipt_do_not_consume_last(ParseException e, String expr, int kind) {
+
+
+  if(errors == 0) {
+    System.out.println("--->Exception Catched!!! The message: <---");
+    System.out.println();
+  }
+
+  errors++;
+  System.out.println();
+  System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+  System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+  System.out.println("Expecting: ");
+  for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+    for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+      System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+    }
+  }
+  System.out.println();
+
+  System.out.println("Number Errors: " +errors);
+
   int token_kind;
   Token t;
   boolean canI = false;
@@ -62,34 +83,31 @@ JAVACODE
 void error_control(ParseException e, String expr, int skipKind) {
 
 
-  if(errors == 0) {
-    System.out.println("--->Exception Catched!!! The message: <---");
-    System.out.println();
-  }
-  if(expr != "0") {
-    if(!(e.currentToken.beginLine == line && e.currentToken.beginColumn == column)) {
-      errors++;
+    if(errors == 0) {
+      System.out.println("--->Exception Catched!!! The message: <---");
       System.out.println();
-      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
-      System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
-      System.out.println("Expecting: ");
-      for(int i = 0; i < e.expectedTokenSequences.length; i++) {
-        for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
-          System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
-        }
-      }
-      System.out.println();
-
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
     }
+
+    errors++;
+    System.out.println();
+    System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+    System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+    System.out.println("Expecting: ");
+    for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+      for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+        System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+      }
+    }
+    System.out.println();
+
+    System.out.println("Number Errors: " +errors);
 
     if(errors > 10) {
       System.out.println("You have at least 10 errors!!!");
       System.exit(1);
     }
 
-  }
+
     Token t;
     do {
       t = getNextToken();
@@ -144,15 +162,16 @@ SKIP :
 
 // definição da produção
 
-void Module() : {}
+ASTModule Module() : {Token t;}
 {
 
-  <MODULE> <ID> <LCHAVETA>  (LOOKAHEAD(2) Declaration() )*
+  <MODULE> t=<ID>{jjtThis.setName(t.image);} <LCHAVETA>  (LOOKAHEAD(2) Declaration() )*
   try {
     ( Function() )*  <RCHAVETA>
   } catch(ParseException e) {
     error_control(e, "Module", RCHAVETA);
   }
+  {return jjtThis;}
 }
 
 void Declaration() : {}
@@ -168,9 +187,9 @@ void Declaration() : {}
 void Function() : {}
 {
     try {
-    ( LOOKAHEAD(3)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
-    <FUNCTION> <ID> ) ) <LPAR>
-
+    //( LOOKAHEAD(2)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
+    //<FUNCTION> <ID> ) ) <LPAR>
+    <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) [<ASSIGN> <ID>] <LPAR>
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
@@ -187,9 +206,8 @@ void Varlist() : {}
   try {
   (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(2) ArrayElement() | ScalarElement() ))*
   } catch(ParseException e) {
-    System.out.println("HEIFEHEA");
 
-    skipt_do_not_consume_last(RPAR);
+    skipt_do_not_consume_last(e, "Varlist", RPAR);
   }
 }
 
@@ -202,11 +220,9 @@ void ArrayElement() : {}
 
 void ScalarElement() : {}
 {
-  try {
+
     <ID>
-  } catch(ParseException e) {
-    System.out.println("HEIFEHEA");
-  }
+
 }
 
 void Stmtlst() : {}
@@ -287,8 +303,13 @@ void While() : {}
 
 void If() : {}
 {
-
-  <IF> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA> ( <ELSE> <LCHAVETA>
+  try {
+    <IF> Exprtest() <LCHAVETA>
+  } catch(ParseException e) {
+    error_control(e, "If", LCHAVETA);
+  }
+  Stmtlst() <RCHAVETA>
+  ( <ELSE> <LCHAVETA>
   Stmtlst() <RCHAVETA> )?
 
 }

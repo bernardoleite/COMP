@@ -2,6 +2,7 @@
 /*@egen*/options
 {
  LOOKAHEAD=1;
+              
  static = false;
 }
 
@@ -32,7 +33,8 @@ public int column = 0;
       tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
       System.out.println("Ficheiro lido com sucesso!");
       YAL2JVM parser = new YAL2JVM(infile);
-      parser.Module();
+      ASTModule module = parser.Module();
+      module.dump("");
       System.out.println("Leitura terminada.");
   }
   catch (java.io.FileNotFoundException e) {
@@ -47,14 +49,33 @@ PARSER_END(YAL2JVM)
 
 
 JAVACODE
-void skipt_do_not_consume_last(int kind) {/*@bgen(jjtree) skipt_do_not_consume_last */
-SimpleNode jjtn000 = new SimpleNode(JJTSKIPT_DO_NOT_CONSUME_LAST);
+void skipt_do_not_consume_last(ParseException e, String expr, int kind) {/*@bgen(jjtree) skipt_do_not_consume_last */
+ASTskipt_do_not_consume_last jjtn000 = new ASTskipt_do_not_consume_last(JJTSKIPT_DO_NOT_CONSUME_LAST);
 boolean jjtc000 = true;
 jjtree.openNodeScope(jjtn000);
 try {
 /*@egen*/
-  ParseException e = generateParseException();
-  System.out.println(e.toString());
+
+
+  if(errors == 0) {
+    System.out.println("--->Exception Catched!!! The message: <---");
+    System.out.println();
+  }
+
+  errors++;
+  System.out.println();
+  System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+  System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+  System.out.println("Expecting: ");
+  for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+    for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+      System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+    }
+  }
+  System.out.println();
+
+  System.out.println("Number Errors: " +errors);
+
   int token_kind;
   Token t;
   boolean canI = false;
@@ -75,52 +96,49 @@ try {
 }
 JAVACODE
 void error_control(ParseException e, String expr, int skipKind) {/*@bgen(jjtree) error_control */
-SimpleNode jjtn000 = new SimpleNode(JJTERROR_CONTROL);
-boolean jjtc000 = true;
-jjtree.openNodeScope(jjtn000);
-try {
+ ASTerror_control jjtn000 = new ASTerror_control(JJTERROR_CONTROL);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+ try {
 /*@egen*/
 
 
-  if(errors == 0) {
-    System.out.println("--->Exception Catched!!! The message: <---");
-    System.out.println();
-  }
-  if(expr != "0") {
-    if(!(e.currentToken.beginLine == line && e.currentToken.beginColumn == column)) {
-      errors++;
+    if(errors == 0) {
+      System.out.println("--->Exception Catched!!! The message: <---");
       System.out.println();
-      System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
-      System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
-      System.out.println("Expecting: ");
-      for(int i = 0; i < e.expectedTokenSequences.length; i++) {
-        for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
-          System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
-        }
-      }
-      System.out.println();
-
-      line = e.currentToken.beginLine;
-      column = e.currentToken.beginColumn;
     }
+
+    errors++;
+    System.out.println();
+    System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
+    System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+    System.out.println("Expecting: ");
+    for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+      for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+        System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+      }
+    }
+    System.out.println();
+
+    System.out.println("Number Errors: " +errors);
 
     if(errors > 10) {
       System.out.println("You have at least 10 errors!!!");
       System.exit(1);
     }
 
-  }
+
     Token t;
     do {
       t = getNextToken();
       System.out.println("Image " + t.image);
 
     } while (t.kind != skipKind);/*@bgen(jjtree)*/
-} finally {
-  if (jjtc000) {
-    jjtree.closeNodeScope(jjtn000, true);
-  }
-}
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
 /*@egen*/
 
 
@@ -170,21 +188,27 @@ SKIP :
 
 // defini\u00c3\u00a7\u00c3\u00a3o da produ\u00c3\u00a7\u00c3\u00a3o
 
-void Module() : {/*@bgen(jjtree) Module */
-  SimpleNode jjtn000 = new SimpleNode(JJTMODULE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+ASTModule Module() : {/*@bgen(jjtree) Module */
+                      ASTModule jjtn000 = new ASTModule(JJTMODULE);
+                      boolean jjtc000 = true;
+                      jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) Module */
   try {
 /*@egen*/
 
-  <MODULE> <ID> <LCHAVETA>  (LOOKAHEAD(2) Declaration() )*
+  <MODULE> t=<ID>{jjtn000.setName(t.image);} <LCHAVETA>  (LOOKAHEAD(2) Declaration() )*
   try {
     ( Function() )*  <RCHAVETA>
   } catch(ParseException e) {
     error_control(e, "Module", RCHAVETA);
   }/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {return jjtn000;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -208,7 +232,7 @@ void Module() : {/*@bgen(jjtree) Module */
 }
 
 void Declaration() : {/*@bgen(jjtree) Declaration */
-  SimpleNode jjtn000 = new SimpleNode(JJTDECLARATION);
+  ASTDeclaration jjtn000 = new ASTDeclaration(JJTDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -244,7 +268,7 @@ void Declaration() : {/*@bgen(jjtree) Declaration */
 }
 
 void Function() : {/*@bgen(jjtree) Function */
-  SimpleNode jjtn000 = new SimpleNode(JJTFUNCTION);
+  ASTFunction jjtn000 = new ASTFunction(JJTFUNCTION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -252,9 +276,9 @@ void Function() : {/*@bgen(jjtree) Function */
     try {
 /*@egen*/
     try {
-    ( LOOKAHEAD(3)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
-    <FUNCTION> <ID> ) ) <LPAR>
-
+    //( LOOKAHEAD(2)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
+    //<FUNCTION> <ID> ) ) <LPAR>
+    <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) [<ASSIGN> <ID>] <LPAR>
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
@@ -287,7 +311,7 @@ void Function() : {/*@bgen(jjtree) Function */
 }
 
 void Varlist() : {/*@bgen(jjtree) Varlist */
-  SimpleNode jjtn000 = new SimpleNode(JJTVARLIST);
+  ASTVarlist jjtn000 = new ASTVarlist(JJTVARLIST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -297,9 +321,8 @@ void Varlist() : {/*@bgen(jjtree) Varlist */
   try {
   (LOOKAHEAD(2) ArrayElement() | ScalarElement() ) ( <VIRG> (LOOKAHEAD(2) ArrayElement() | ScalarElement() ))*
   } catch(ParseException e) {
-    System.out.println("HEIFEHEA");
 
-    skipt_do_not_consume_last(RPAR);
+    skipt_do_not_consume_last(e, "Varlist", RPAR);
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -324,7 +347,7 @@ void Varlist() : {/*@bgen(jjtree) Varlist */
 }
 
 void ArrayElement() : {/*@bgen(jjtree) ArrayElement */
-  SimpleNode jjtn000 = new SimpleNode(JJTARRAYELEMENT);
+  ASTArrayElement jjtn000 = new ASTArrayElement(JJTARRAYELEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -343,28 +366,26 @@ void ArrayElement() : {/*@bgen(jjtree) ArrayElement */
 }
 
 void ScalarElement() : {/*@bgen(jjtree) ScalarElement */
-  SimpleNode jjtn000 = new SimpleNode(JJTSCALARELEMENT);
+  ASTScalarElement jjtn000 = new ASTScalarElement(JJTSCALARELEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) ScalarElement */
-  try {
+    try {
 /*@egen*/
-  try {
-    <ID>
-  } catch(ParseException e) {
-    System.out.println("HEIFEHEA");
-  }/*@bgen(jjtree)*/
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
+
+    <ID>/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
-  }
 /*@egen*/
+
 }
 
 void Stmtlst() : {/*@bgen(jjtree) Stmtlst */
-  SimpleNode jjtn000 = new SimpleNode(JJTSTMTLST);
+  ASTStmtlst jjtn000 = new ASTStmtlst(JJTSTMTLST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -397,7 +418,7 @@ void Stmtlst() : {/*@bgen(jjtree) Stmtlst */
 }
 
 void Stmt() : {/*@bgen(jjtree) Stmt */
-  SimpleNode jjtn000 = new SimpleNode(JJTSTMT);
+  ASTStmt jjtn000 = new ASTStmt(JJTSTMT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -435,7 +456,7 @@ void Stmt() : {/*@bgen(jjtree) Stmt */
 }
 
 void Assign() : {/*@bgen(jjtree) Assign */
-  SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
+  ASTAssign jjtn000 = new ASTAssign(JJTASSIGN);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -468,7 +489,7 @@ void Assign() : {/*@bgen(jjtree) Assign */
 }
 
 void Lhs() : {/*@bgen(jjtree) Lhs */
-  SimpleNode jjtn000 = new SimpleNode(JJTLHS);
+  ASTLhs jjtn000 = new ASTLhs(JJTLHS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -502,7 +523,7 @@ void Lhs() : {/*@bgen(jjtree) Lhs */
 }
 
 void Rhs() : {/*@bgen(jjtree) Rhs */
-  SimpleNode jjtn000 = new SimpleNode(JJTRHS);
+  ASTRhs jjtn000 = new ASTRhs(JJTRHS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -536,7 +557,7 @@ void Rhs() : {/*@bgen(jjtree) Rhs */
 }
 
 void ArraySize() : {/*@bgen(jjtree) ArraySize */
-  SimpleNode jjtn000 = new SimpleNode(JJTARRAYSIZE);
+  ASTArraySize jjtn000 = new ASTArraySize(JJTARRAYSIZE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -570,7 +591,7 @@ void ArraySize() : {/*@bgen(jjtree) ArraySize */
 }
 
 void Term() : {/*@bgen(jjtree) Term */
-  SimpleNode jjtn000 = new SimpleNode(JJTTERM);
+  ASTTerm jjtn000 = new ASTTerm(JJTTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -603,7 +624,7 @@ void Term() : {/*@bgen(jjtree) Term */
 }
 
 void Exprtest() : {/*@bgen(jjtree) Exprtest */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPRTEST);
+  ASTExprtest jjtn000 = new ASTExprtest(JJTEXPRTEST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -638,7 +659,7 @@ void Exprtest() : {/*@bgen(jjtree) Exprtest */
 }
 
 void While() : {/*@bgen(jjtree) While */
-  SimpleNode jjtn000 = new SimpleNode(JJTWHILE);
+  ASTWhile jjtn000 = new ASTWhile(JJTWHILE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -674,15 +695,20 @@ void While() : {/*@bgen(jjtree) While */
 }
 
 void If() : {/*@bgen(jjtree) If */
-  SimpleNode jjtn000 = new SimpleNode(JJTIF);
+  ASTIf jjtn000 = new ASTIf(JJTIF);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) If */
   try {
 /*@egen*/
-
-  <IF> Exprtest() <LCHAVETA> Stmtlst() <RCHAVETA> ( <ELSE> <LCHAVETA>
+  try {
+    <IF> Exprtest() <LCHAVETA>
+  } catch(ParseException e) {
+    error_control(e, "If", LCHAVETA);
+  }
+  Stmtlst() <RCHAVETA>
+  ( <ELSE> <LCHAVETA>
   Stmtlst() <RCHAVETA> )?/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -708,7 +734,7 @@ void If() : {/*@bgen(jjtree) If */
 }
 
 void Call() : {/*@bgen(jjtree) Call */
-  SimpleNode jjtn000 = new SimpleNode(JJTCALL);
+  ASTCall jjtn000 = new ASTCall(JJTCALL);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -741,7 +767,7 @@ void Call() : {/*@bgen(jjtree) Call */
 }
 
 void ArgumentList() : {/*@bgen(jjtree) ArgumentList */
-  SimpleNode jjtn000 = new SimpleNode(JJTARGUMENTLIST);
+  ASTArgumentList jjtn000 = new ASTArgumentList(JJTARGUMENTLIST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -774,7 +800,7 @@ void ArgumentList() : {/*@bgen(jjtree) ArgumentList */
 }
 
 void Argument() : {/*@bgen(jjtree) Argument */
-  SimpleNode jjtn000 = new SimpleNode(JJTARGUMENT);
+  ASTArgument jjtn000 = new ASTArgument(JJTARGUMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -793,7 +819,7 @@ void Argument() : {/*@bgen(jjtree) Argument */
 }
 
 void ArrayAccess() : {/*@bgen(jjtree) ArrayAccess */
-  SimpleNode jjtn000 = new SimpleNode(JJTARRAYACCESS);
+  ASTArrayAccess jjtn000 = new ASTArrayAccess(JJTARRAYACCESS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -826,7 +852,7 @@ void ArrayAccess() : {/*@bgen(jjtree) ArrayAccess */
 }
 
 void ScalarAccess() : {/*@bgen(jjtree) ScalarAccess */
-  SimpleNode jjtn000 = new SimpleNode(JJTSCALARACCESS);
+  ASTScalarAccess jjtn000 = new ASTScalarAccess(JJTSCALARACCESS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
@@ -845,7 +871,7 @@ void ScalarAccess() : {/*@bgen(jjtree) ScalarAccess */
 }
 
 void Index() : {/*@bgen(jjtree) Index */
-  SimpleNode jjtn000 = new SimpleNode(JJTINDEX);
+  ASTIndex jjtn000 = new ASTIndex(JJTINDEX);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
