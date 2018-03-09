@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTRhs extends SimpleNode {
+  private String op;
   public ASTRhs(int id) {
     super(id);
   }
@@ -9,6 +10,18 @@ class ASTRhs extends SimpleNode {
   public ASTRhs(YAL2JVM p, int id) {
     super(p, id);
   }
+  public String getOp() {
+    return op;
+  }
+  public void setOp(String op) {
+    this.op = op;
+  }
 
+  public String toString() {
+    String test = super.toString();
+    if(op != null)
+      return test + " " + op;
+    return test;
+  }
 }
 /* JavaCC - OriginalChecksum=57c48d7b1f64cce45e950bc0b474a2eb (do not edit this line) */

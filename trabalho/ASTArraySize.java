@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTArraySize extends SimpleNode {
+  private String name;
   public ASTArraySize(int id) {
     super(id);
   }
@@ -9,6 +10,18 @@ class ASTArraySize extends SimpleNode {
   public ASTArraySize(YAL2JVM p, int id) {
     super(p, id);
   }
+  public String getName() {
+    return name;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
 
+  public String toString() {
+    String test = super.toString();
+    if(name != null)
+      return test + " " + name;
+    return test;
+  }
 }
 /* JavaCC - OriginalChecksum=571a1c228aa48216bacb1514366f81f3 (do not edit this line) */

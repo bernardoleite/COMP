@@ -532,15 +532,18 @@ void Lhs() : {/*@bgen(jjtree) Lhs */
 }
 
 void Rhs() : {/*@bgen(jjtree) Rhs */
-  ASTRhs jjtn000 = new ASTRhs(JJTRHS);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+              ASTRhs jjtn000 = new ASTRhs(JJTRHS);
+              boolean jjtc000 = true;
+              jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) Rhs */
   try {
 /*@egen*/
 
-  ( Term() ( ( <ARITH_OP> | <BITWISE_OP> | <ADDSUB_OP> ) Term() )? )
+  ( Term() ( ( t=<ARITH_OP>   {jjtn000.setOp(t.image);}
+  | t=<BITWISE_OP>   {jjtn000.setOp(t.image);}
+  | t=<ADDSUB_OP>   {jjtn000.setOp(t.image);})
+  Term() )? )
   | "[" ArraySize() "]"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -563,19 +566,25 @@ void Rhs() : {/*@bgen(jjtree) Rhs */
   }
 /*@egen*/
 
+
 }
 
 void ArraySize() : {/*@bgen(jjtree) ArraySize */
-  ASTArraySize jjtn000 = new ASTArraySize(JJTARRAYSIZE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                    ASTArraySize jjtn000 = new ASTArraySize(JJTARRAYSIZE);
+                    boolean jjtc000 = true;
+                    jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) ArraySize */
   try {
 /*@egen*/
 
   ScalarAccess()
-  | <INTEGER>/*@bgen(jjtree)*/
+  | ( t=<INTEGER>/*@bgen(jjtree)*/
+                   {
+                     jjtree.closeNodeScope(jjtn000, true);
+                     jjtc000 = false;
+                   }
+/*@egen*/  {jjtn000.setName(t.image);} )/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -600,15 +609,21 @@ void ArraySize() : {/*@bgen(jjtree) ArraySize */
 }
 
 void Term() : {/*@bgen(jjtree) Term */
-  ASTTerm jjtn000 = new ASTTerm(JJTTERM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+               ASTTerm jjtn000 = new ASTTerm(JJTTERM);
+               boolean jjtc000 = true;
+               jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t1, t2;}
 {/*@bgen(jjtree) Term */
   try {
 /*@egen*/
 
-  ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )/*@bgen(jjtree)*/
+  ( t1=<ADDSUB_OP> {jjtn000.setOp(t1.image);} )?
+  ( t2=<INTEGER>/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/ {jjtn000.setName(t2.image);}  |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

@@ -258,26 +258,31 @@ void Lhs() : {}
 
 }
 
-void Rhs() : {}
+void Rhs() : {Token t;}
 {
 
-  ( Term() ( ( <ARITH_OP> | <BITWISE_OP> | <ADDSUB_OP> ) Term() )? )
+  ( Term() ( ( t=<ARITH_OP>   {jjtThis.setOp(t.image);}
+  | t=<BITWISE_OP>   {jjtThis.setOp(t.image);}
+  | t=<ADDSUB_OP>   {jjtThis.setOp(t.image);})
+  Term() )? )
   | "[" ArraySize() "]"
+
 
 }
 
-void ArraySize() : {}
+void ArraySize() : {Token t;}
 {
 
   ScalarAccess()
-  | <INTEGER>
+  | ( t=<INTEGER>  {jjtThis.setName(t.image);} )
 
 }
 
-void Term() : {}
+void Term() : {Token t1, t2;}
 {
 
-  ( <ADDSUB_OP> )? ( <INTEGER> |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
+  ( t1=<ADDSUB_OP> {jjtThis.setOp(t1.image);} )?
+  ( t2=<INTEGER> {jjtThis.setName(t2.image);}  |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
 
 }
 
