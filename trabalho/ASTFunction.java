@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTFunction extends SimpleNode {
+  private String name;
   public ASTFunction(int id) {
     super(id);
   }
@@ -9,6 +10,16 @@ class ASTFunction extends SimpleNode {
   public ASTFunction(YAL2JVM p, int id) {
     super(p, id);
   }
+  public String getName() {
+    return name;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
 
+  public String toString() {
+    String test = super.toString();
+    return test + " " + name;
+  }
 }
 /* JavaCC - OriginalChecksum=e411ad5533237f7bf403ff6237d4bd60 (do not edit this line) */

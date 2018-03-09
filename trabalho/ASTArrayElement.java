@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTArrayElement extends SimpleNode {
+  private String name;
   public ASTArrayElement(int id) {
     super(id);
   }
@@ -9,6 +10,16 @@ class ASTArrayElement extends SimpleNode {
   public ASTArrayElement(YAL2JVM p, int id) {
     super(p, id);
   }
+  public String getName() {
+    return name;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
 
+  public String toString() {
+    String test = super.toString();
+    return test + " " + name;
+  }
 }
 /* JavaCC - OriginalChecksum=05ca1048a68500ba0c366ef749681324 (do not edit this line) */

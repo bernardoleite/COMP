@@ -184,12 +184,11 @@ void Declaration() : {}
   }
 }
 
-void Function() : {}
+void Function() : {Token t;}
 {
     try {
-    //( LOOKAHEAD(2)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
-    //<FUNCTION> <ID> ) ) <LPAR>
-    <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) [<ASSIGN> <ID>] <LPAR>
+    <FUNCTION> ( LOOKAHEAD(2)( (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> t=<ID> ) | (
+    t=<ID> ) ) <LPAR> {jjtThis.setName(t.image);}
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
@@ -211,18 +210,18 @@ void Varlist() : {}
   }
 }
 
-void ArrayElement() : {}
+void ArrayElement() : {Token t;}
 {
 
-    <ID> "[" "]"
-
+    t=<ID> "[" "]"
+    {jjtThis.setName(t.image);}
 }
 
-void ScalarElement() : {}
+void ScalarElement() : {Token t;}
 {
 
-    <ID>
-
+    t=<ID>
+    {jjtThis.setName(t.image);}
 }
 
 void Stmtlst() : {}
@@ -342,11 +341,11 @@ void ArrayAccess() : {}
 
 }
 
-void ScalarAccess() : {}
+void ScalarAccess() : {Token t;}
 {
 
-  <ID> ( "." <SIZE> )?
-
+  t=<ID> ( "." <SIZE> )?
+  {jjtThis.setName(t.image);}
 }
 
 void Index() : {}

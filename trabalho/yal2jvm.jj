@@ -268,17 +268,16 @@ void Declaration() : {/*@bgen(jjtree) Declaration */
 }
 
 void Function() : {/*@bgen(jjtree) Function */
-  ASTFunction jjtn000 = new ASTFunction(JJTFUNCTION);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                   ASTFunction jjtn000 = new ASTFunction(JJTFUNCTION);
+                   boolean jjtc000 = true;
+                   jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) Function */
     try {
 /*@egen*/
     try {
-    //( LOOKAHEAD(2)( <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> <ID> ) | (
-    //<FUNCTION> <ID> ) ) <LPAR>
-    <FUNCTION> (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) [<ASSIGN> <ID>] <LPAR>
+    <FUNCTION> ( LOOKAHEAD(2)( (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> t=<ID> ) | (
+    t=<ID> ) ) <LPAR> {jjtn000.setName(t.image);}
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
@@ -347,41 +346,51 @@ void Varlist() : {/*@bgen(jjtree) Varlist */
 }
 
 void ArrayElement() : {/*@bgen(jjtree) ArrayElement */
-  ASTArrayElement jjtn000 = new ASTArrayElement(JJTARRAYELEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                       ASTArrayElement jjtn000 = new ASTArrayElement(JJTARRAYELEMENT);
+                       boolean jjtc000 = true;
+                       jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) ArrayElement */
     try {
 /*@egen*/
 
-    <ID> "[" "]"/*@bgen(jjtree)*/
+    t=<ID> "[" "]"/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {jjtn000.setName(t.image);}/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
     }
 /*@egen*/
-
 }
 
 void ScalarElement() : {/*@bgen(jjtree) ScalarElement */
-  ASTScalarElement jjtn000 = new ASTScalarElement(JJTSCALARELEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                        ASTScalarElement jjtn000 = new ASTScalarElement(JJTSCALARELEMENT);
+                        boolean jjtc000 = true;
+                        jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) ScalarElement */
     try {
 /*@egen*/
 
-    <ID>/*@bgen(jjtree)*/
+    t=<ID>/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {jjtn000.setName(t.image);}/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
     }
 /*@egen*/
-
 }
 
 void Stmtlst() : {/*@bgen(jjtree) Stmtlst */
@@ -852,22 +861,27 @@ void ArrayAccess() : {/*@bgen(jjtree) ArrayAccess */
 }
 
 void ScalarAccess() : {/*@bgen(jjtree) ScalarAccess */
-  ASTScalarAccess jjtn000 = new ASTScalarAccess(JJTSCALARACCESS);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                       ASTScalarAccess jjtn000 = new ASTScalarAccess(JJTSCALARACCESS);
+                       boolean jjtc000 = true;
+                       jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) ScalarAccess */
   try {
 /*@egen*/
 
-  <ID> ( "." <SIZE> )?/*@bgen(jjtree)*/
+  t=<ID> ( "." <SIZE> )?/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {jjtn000.setName(t.image);}/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
 /*@egen*/
-
 }
 
 void Index() : {/*@bgen(jjtree) Index */
