@@ -20,11 +20,13 @@ public interface YAL2JVMTreeConstants
   public int JJTWHILE = 16;
   public int JJTIF = 17;
   public int JJTCALL = 18;
-  public int JJTARGUMENTLIST = 19;
-  public int JJTARGUMENT = 20;
-  public int JJTARRAYACCESS = 21;
-  public int JJTSCALARACCESS = 22;
-  public int JJTINDEX = 23;
+  public int JJTCALLSTMT = 19;
+  public int JJTARGUMENTLIST = 20;
+  public int JJTARGUMENT = 21;
+  public int JJTARRAYACCESS = 22;
+  public int JJTSCALARACCESS = 23;
+  public int JJTINDEX = 24;
+  public int JJTERRORBLOCK = 25;
 
 
   public String[] jjtNodeName = {
@@ -47,11 +49,13 @@ public interface YAL2JVMTreeConstants
     "While",
     "If",
     "Call",
+    "CallStmt",
     "ArgumentList",
     "Argument",
     "ArrayAccess",
     "ScalarAccess",
     "Index",
+    "ErrorBlock",
   };
 }
-/* JavaCC - OriginalChecksum=b7dac3398eeada3f218f32b5f47eae5e (do not edit this line) */
+/* JavaCC - OriginalChecksum=646a22d3630dda791a00e69a1c6d3dde (do not edit this line) */

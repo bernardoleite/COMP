@@ -3,6 +3,7 @@ options
  LOOKAHEAD=1;
  MULTI = true;
  static = false;
+ VISITOR = true;
 }
 
 PARSER_BEGIN(YAL2JVM)
@@ -10,7 +11,7 @@ import java.io.* ;
 // código Java que invoca o parser
 public class YAL2JVM {
 
-public int errors = 0; // use this variable in order to control the maximum of errors (10)
+public static int errors = 0; // use this variable in order to control the maximum of errors (10)
 public int line = 0;
 public int column = 0;
 
@@ -18,7 +19,6 @@ public int column = 0;
 // criação do objecto utilizando o constructor com argumento para
 // ler do standard input (teclado)
  YAL2JVMTokenManager tm;
-
   if (args.length<1) {
         System.out.println("Ficheiro não especificado!");
         System.exit(1);
@@ -26,12 +26,69 @@ public int column = 0;
   try{
       java.io.InputStream infile;
       infile = new java.io.FileInputStream(args[0]);
+
       tm = new   YAL2JVMTokenManager(new SimpleCharStream(infile));
       System.out.println("Ficheiro lido com sucesso!");
+
       YAL2JVM parser = new YAL2JVM(infile);
       ASTModule module = parser.Module();
       module.dump("");
       System.out.println("Leitura terminada.");
+      if(errors>0){
+        System.out.println("Fix Errors!!!");
+        System.exit(0);
+      }
+      if(!module.analyse(null)){
+        System.out.println("Warning!!! You have errors and you should fix them\n Generated Code may be incorrect!!!");
+        System.exit(0);
+      }
+      //Code to Traverse Tree
+      PostorderVisitor v = new PostorderVisitor();
+      module.jjtAccept(v,null);
+      v.reverseStack();
+
+        System.out.println("----------");
+      System.out.println();
+
+
+      for(int i = 0; i < v.getStack().size(); i++){
+          System.out.println(v.getStack().get(i).getType()+": "+v.getStack().get(i).getName());
+        }
+
+      System.out.println("----------");
+      System.out.println();
+
+      GenByteCode progj = new GenByteCode(v.getStack());
+
+      System.out.println("----------");
+      System.out.println();
+
+      progj.printIR();
+
+      System.out.println("----------");
+      System.out.println();
+
+      progj.printLines();
+      String filename = args[0];
+
+      int lastSeparatorIndex = filename.lastIndexOf("/");
+      if (lastSeparatorIndex == -1) {
+        lastSeparatorIndex = filename.lastIndexOf("\\");
+        if (lastSeparatorIndex == -1) {
+          filename = filename;
+        } else {
+            filename = filename.substring(lastSeparatorIndex + 1);
+        }
+      } else {
+          filename = filename.substring(lastSeparatorIndex + 1);
+      }
+
+      int extensionIndex = filename.lastIndexOf(".");
+
+      filename = filename.substring(0, extensionIndex);
+      filename += ".j";
+      progj.writeToFile(filename);
+
   }
   catch (java.io.FileNotFoundException e) {
       System.out.println("Ficheiro "+args[0]+" não encontrado");
@@ -82,7 +139,7 @@ void skipt_do_not_consume_last(ParseException e, String expr, int kind) {
 JAVACODE
 void error_control(ParseException e, String expr, int skipKind) {
 
-
+    ParseException p = generateParseException();
     if(errors == 0) {
       System.out.println("--->Exception Catched!!! The message: <---");
       System.out.println();
@@ -90,12 +147,12 @@ void error_control(ParseException e, String expr, int skipKind) {
 
     errors++;
     System.out.println();
-    System.out.println("yal2jvm.jj:error: Something went wrong on " + expr);
-    System.out.println(e.currentToken.next.image + " <-- Line:" + e.currentToken.beginLine + ", column:" + e.currentToken.next.beginColumn);
+    System.out.println("yal2jvm.jj:error: Something went wrong on!!!");
+    System.out.println(p.currentToken.next.image + " <-- Line:" + p.currentToken.beginLine + ", column:" + p.currentToken.next.beginColumn);
     System.out.println("Expecting: ");
-    for(int i = 0; i < e.expectedTokenSequences.length; i++) {
-      for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
-        System.out.println(tokenImage[e.expectedTokenSequences[i][j]]);
+    for(int i = 0; i < p.expectedTokenSequences.length; i++) {
+      for(int j = 0; j < p.expectedTokenSequences[i].length; j++) {
+        System.out.println(tokenImage[p.expectedTokenSequences[i][j]]);
       }
     }
     System.out.println();
@@ -111,7 +168,6 @@ void error_control(ParseException e, String expr, int skipKind) {
     Token t;
     do {
       t = getNextToken();
-      System.out.println("Image " + t.image);
 
     } while (t.kind != skipKind);
 
@@ -174,11 +230,11 @@ ASTModule Module() : {Token t;}
   {return jjtThis;}
 }
 
-void Declaration() : {}
+void Declaration() : {Token num; Token op;}
 {
   try {
   (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) ( <ASSIGN> ( ( "[" ArraySize() "]" ) | (
-  <ADDSUB_OP> )? <INTEGER> ) )? <PVIRG>
+  op=<ADDSUB_OP>{jjtThis.setOp(op.image);} )? num=<INTEGER>{jjtThis.setNumber(num.image);} ) )? <PVIRG>
   } catch(ParseException e) {
     error_control(e, "Declaration", PVIRG);
   }
@@ -187,8 +243,9 @@ void Declaration() : {}
 void Function() : {Token t;}
 {
     try {
-    <FUNCTION> ( LOOKAHEAD(2)( (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> t=<ID> ) | (
-    t=<ID> ) ) <LPAR> {jjtThis.setName(t.image);}
+    <FUNCTION>
+    ( LOOKAHEAD(2)( (LOOKAHEAD(<ID>"[""]") ArrayElement() | ScalarElement() ) <ASSIGN> t=<ID> ) | (
+    t=<ID> ) ) <LPAR> {jjtThis.setName(t.image); jjtThis.setToken(t);}
   } catch(ParseException e) {
     error_control(e, "Function", LPAR);
   }
@@ -214,14 +271,14 @@ void ArrayElement() : {Token t;}
 {
 
     t=<ID> "[" "]"
-    {jjtThis.setName(t.image);}
+    {jjtThis.setName(t.image); jjtThis.setToken(t);}
 }
 
 void ScalarElement() : {Token t;}
 {
 
     t=<ID>
-    {jjtThis.setName(t.image);}
+    {jjtThis.setName(t.image); jjtThis.setToken(t);}
 }
 
 void Stmtlst() : {}
@@ -237,7 +294,7 @@ void Stmt() : {}
   While()
   | If()
   | LOOKAHEAD(3) Assign()
-  | Call() <PVIRG>
+  | CallStmt()
   } catch(ParseException e) {
     error_control(e, "Stmt", PVIRG);
   }
@@ -282,14 +339,15 @@ void Term() : {Token t1, t2;}
 {
 
   ( t1=<ADDSUB_OP> {jjtThis.setOp(t1.image);} )?
-  ( t2=<INTEGER> {jjtThis.setName(t2.image);}  |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() | ScalarAccess() )
+  ( t2=<INTEGER> {jjtThis.setName(t2.image);}  |LOOKAHEAD(3) Call() |LOOKAHEAD(<ID>"[") ArrayAccess() |
+  ScalarAccess() )
 
 }
 
-void Exprtest() : {}
+void Exprtest() : {Token t;}
 {
   try {
-  <LPAR> Lhs() <RELA_OP> Rhs() <RPAR>
+  <LPAR> Lhs() t=<RELA_OP> {jjtThis.setOp(t.image); } Rhs() <RPAR>
   } catch(ParseException e) {
     error_control(e, "Exprtest", RPAR);
   }
@@ -307,22 +365,47 @@ void While() : {}
 
 void If() : {}
 {
-  try {
+
     <IF> Exprtest() <LCHAVETA>
-  } catch(ParseException e) {
-    error_control(e, "If", LCHAVETA);
-  }
   Stmtlst() <RCHAVETA>
   ( <ELSE> <LCHAVETA>
   Stmtlst() <RCHAVETA> )?
 
 }
 
-void Call() : {}
+void Call() : {Token t1, t2;}
+{
+  t1=<ID> {jjtThis.setId1(t1.image); jjtThis.setToken(t1);}
+  ( "." t2=<ID> {jjtThis.setId2(t2.image);} )? <LPAR>
+  try {
+    ( ArgumentList() )? <RPAR>
+  } catch(ParseException e) {
+    error_control(e, "Call", RPAR);
+
+  }
+}
+
+void CallStmt() : {Token t1, t2;}
 {
 
-  <ID> ( "." <ID> )? <LPAR> ( ArgumentList() )? <RPAR>
+  t1=<ID> {jjtThis.setId1(t1.image); jjtThis.setToken(t1);}
+  ( "." t2=<ID> {jjtThis.setId2(t2.image);} )? <LPAR>
 
+  try {
+      ( ArgumentList() )? <RPAR>
+  } catch(ParseException e) {
+    error_control(e, "Call", RPAR);
+    Token t = getToken(1);
+
+    if(t.kind == LCHAVETA)
+      ErrorBlock();
+
+    else if(t.kind == PVIRG)
+      getNextToken();
+      return;
+  }
+
+  <PVIRG>
 }
 
 void ArgumentList() : {}
@@ -332,31 +415,39 @@ void ArgumentList() : {}
 
 }
 
-void Argument() : {}
+void Argument() : {Token t1, t2, t3;}
 {
 
-  ( <ID> | <STRING> | <INTEGER> )
+  (
+      t1=<ID> {jjtThis.setName(t1.image); jjtThis.setToken(t1);}
+    | t2=<STRING> {jjtThis.setString(t2.image); jjtThis.setToken(t2);}
+    | t3=<INTEGER> {jjtThis.setNumber(t3.image); jjtThis.setToken(t3);}
+  )
 
 }
 
-void ArrayAccess() : {}
+void ArrayAccess() : {Token t;}
 {
 
-  <ID> "[" Index() "]"
+  t=<ID>{jjtThis.setName(t.image); jjtThis.setToken(t);} "[" Index() "]"
 
 }
 
-void ScalarAccess() : {Token t;}
+void ScalarAccess() : {Token t, size;}
 {
 
-  t=<ID> ( "." <SIZE> )?
-  {jjtThis.setName(t.image);}
+  t=<ID> ( "." size=<SIZE> {jjtThis.setSize(size.image);} )?
+  {jjtThis.setName(t.image); jjtThis.setToken(t);}
 }
 
-void Index() : {}
+void Index() : {Token t1, t2;}
 {
+  t1=<ID> {jjtThis.setName(t1.image);  jjtThis.setToken(t1);}
+  | t2=<INTEGER> {jjtThis.setNumber(t2.image); jjtThis.setToken(t2);}
 
-  <ID>
-  | <INTEGER>
+}
 
+void ErrorBlock() : {}
+{
+  <LCHAVETA> Stmtlst() <RCHAVETA>
 }

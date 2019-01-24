@@ -1,0 +1,28 @@
+* semantic analysis not reporting when variables are not initialized
+* semantic analysis not verifying correct initialization
+* semantic analysis not verifying method existance (e.g. using print instead of io.print the compiler should search for a print function inside the module.
+* does not verify if method returns the expected type
+* invokestatic Test6/io.print(I)V <-- this is not correct, it should be invokestatic io/print(I)V as io is outside current module
+* could not execute many of the test files!
+* Tests keep giving the following exception:
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 1
+        at java.util.Vector.get(Unknown Source)
+        at GenByteCode.BuildSmtLines(GenByteCode.java:253)
+        at GenByteCode.buildLines(GenByteCode.java:135)
+        at GenByteCode.<init>(GenByteCode.java:21)
+        at YAL2JVM.main(YAL2JVM.java:47)
+simple examples giving exception:
+1) module Test0 {
+	function main() {
+		a = 10;
+		b = 20;
+		c = b*a;
+		print(c);
+	}
+}
+2) module Hello {
+	function main() {
+		io.print("Hello World");
+	}
+	
+}

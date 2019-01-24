@@ -1,0 +1,44 @@
+--> Note: 
+
+* The expected results are the ".j" files present on this folder.
+
+* library1.yal and io.class are present on this folder since they are needed to run the files.
+
+--> Intention of each example:
+
+* aval8.yal
+
+- invocation of functions;
+- arithmetic expressions;
+- conditional instructions.
+
+* programa1.yal
+
+- global variables;
+- invocation of functions;
+- arithmetic expressions;
+- deal with arrays;
+- loops;
+
+* programa2.yal
+
+- invocation of functions;
+- arithmetic expressions;
+- deal with arrays;
+- loops;
+
+* programa3.yal
+
+- invocation of functions;
+- arithmetic expressions;
+- deal with arrays;
+- loops;
+
+* sqrt.yal
+
+- invocation of functions;
+- arithmetic expressions;
+- deal with arrays;
+- loops;
+
+

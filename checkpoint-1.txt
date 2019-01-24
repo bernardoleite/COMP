@@ -1,0 +1,3 @@
+* Include usage message when no inputs (or bad inputs) are given. E.g. print the following message and exit: "usage: java Yal2jvm <input_file>"
+* what is 'Image N'? just debugging?
+* yal2jvm.jj:error: Something went wrong on Varlist <- remember that the ones programming in the Yal language would not know that your rule is named "Varlist", hence try and give better descriptions to the user, such as "when verifying the arguments/parameters of function call/declaration"

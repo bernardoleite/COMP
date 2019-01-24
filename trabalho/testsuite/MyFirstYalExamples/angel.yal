@@ -1,0 +1,14 @@
+module aval1 {
+   function main() {
+    a=[10];
+
+    i = 0;
+
+    while(i < a.size) {
+      a[i] = 1;
+      i = i+1;
+    }
+   }
+
+
+}
